@@ -1,8 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class SentinelUI extends JFrame implements LogCallback{
-        private JTextArea logArea;
+public class SentinelUI extends JFrame implements LogCallback {
+    private JTextArea logArea;
     private JButton startButton;
     private JProgressBar progressBar;
     private TaskEngine engine;
@@ -20,7 +20,7 @@ public class SentinelUI extends JFrame implements LogCallback{
         logArea.setEditable(false); // Read-only
         logArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
         logArea.setBackground(Color.BLACK);
-        logArea.setForeground(Color.GREEN);
+        logArea.setForeground(Color.PINK);
         JScrollPane scrollPane = new JScrollPane(logArea);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -55,13 +55,13 @@ public class SentinelUI extends JFrame implements LogCallback{
                 // We need to modify TaskWorker to accept 'this' (the logger)
                 // For now, let's assume we fixed TaskWorker manually below
                 worker.registerData();
-                
-                // IMPORTANT: We need to update TaskWorker to pass 'this' 
+
+                // IMPORTANT: We need to update TaskWorker to pass 'this'
                 // to the new HttpCheckTask(..., this)
-                worker.generateTasksWithCallback(this); 
+                worker.generateTasksWithCallback(this);
 
                 worker.runTasks();
-                
+
                 // When done:
                 SwingUtilities.invokeLater(() -> {
                     logArea.append("--- Scan Complete ---\n");
@@ -88,7 +88,3 @@ public class SentinelUI extends JFrame implements LogCallback{
     }
 
 }
-
-
-
-

@@ -38,15 +38,15 @@ public class TaskWorker {
         }
     }
 
-    public void generateTasks() {
-
-        data.forEach((level, urlList) -> {
-            for (String url : urlList) {
-            // No 'i', no size checks, no crashes.
-            this.workload.addTask(new HttpCheckTask(level, url));
+    public void generateTasksWithCallback(LogCallback logger) {
+    data.forEach((level, urlList) -> {
+        for (String url : urlList) {
+            // Pass the 'logger' (the UI window) into the task
+            this.workload.addTask(new HttpCheckTask(level, url, logger));
         }
     });
-    }
+}
+
 
     public void runTasks() {
         this.workload.executeAll();

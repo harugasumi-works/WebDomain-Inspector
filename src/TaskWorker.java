@@ -4,17 +4,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.List;
+ 
 public class TaskWorker {
-
+ 
     Map<LogLevel, ArrayList<String>> data;  
     String sourcefile = "links.txt";
     private TaskEngine workload ;
-
+    private final List<String> logBuffer = new ArrayList<>();
+ 
     public TaskWorker (TaskEngine engine) {
         this.workload = engine;
     }
-
+ 
     public void registerData() {
         data = new HashMap<>(); // Map<LogLevel, List<String>>
         try (BufferedReader br = new BufferedReader(new FileReader(sourcefile))) {
@@ -37,25 +39,30 @@ public class TaskWorker {
             e.printStackTrace();
         }
     }
-
-    public void generateTasksWithCallback(LogCallback logger) {
+ 
+    public void generateTasks() {
     data.forEach((level, urlList) -> {
         for (String url : urlList) {
-            // Pass the 'logger' (the UI window) into the task
-            this.workload.addTask(new HttpCheckTask(level, url, logger));
+            this.workload.addTask(new HttpCheckTask(level, url));
         }
     });
-}
-
-
+    }
+ 
+ 
     public void runTasks() {
-        this.workload.executeAll();
+        logBuffer.clear();
+        // pass a Consumer that stores each log message into logBuffer
+        this.workload.executeAll(logBuffer::add);
     }
-
-    public void showReport(){
-        this.workload.showReport();
+ 
+    public List<String> getLogs() {
+        return new ArrayList<>(logBuffer);
     }
-
+ 
+    public String showReport(){
+        return this.workload.showReport();
+    }
+ 
     public void stop() {
         this.workload.stop();
     }

@@ -3,20 +3,31 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.function.Consumer;
 
 
 public class HttpCheckTask implements Task{
     private final LogLevel level;
     private final String url;
-    private final LogCallback logger;
+    private Consumer<String> logger;
     private static final HttpClient client = HttpClient.newBuilder()
             .followRedirects(HttpClient.Redirect.NORMAL) // Handle 301 Redirects automatically
             .build();
 
-    public HttpCheckTask(LogLevel level, String url, LogCallback logger) {
+    
+    public void setLogger(Consumer<String> logger) {
+        this.logger = logger;
+    }        
+
+    private void log(String message) {
+    if (logger != null) {
+        logger.accept(message);
+    }
+}
+      
+    public HttpCheckTask(LogLevel level, String url) {
         this.level = level;
         this.url = url;
-        this.logger = logger;
     }
 
     @Override
@@ -32,7 +43,9 @@ public class HttpCheckTask implements Task{
             // Synchronous send (blocking this worker thread only)
             HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
             String msg = String.format("[%d] %s", response.statusCode(), url);
-            logger.onLog(msg);
+            if (logger != null) {
+            log(msg);
+            }
             return true;
            
 
@@ -43,7 +56,9 @@ public class HttpCheckTask implements Task{
     }
 
 
+
     public int getPriority() {
         return level.getValue();
     }
 }
+

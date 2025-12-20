@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class SentinelUI extends JFrame implements LogCallback {
+public class SentinelUI extends JFrame {
     private JTextArea logArea;
     private JButton startButton;
     private JProgressBar progressBar;
@@ -27,7 +27,6 @@ public class SentinelUI extends JFrame implements LogCallback {
         // 3. The Control Panel (Top)
         JPanel topPanel = new JPanel();
         startButton = new JButton("Load & Scan");
-        startButton.addActionListener(e -> startScan());
         topPanel.add(startButton);
         add(topPanel, BorderLayout.NORTH);
 
@@ -39,52 +38,71 @@ public class SentinelUI extends JFrame implements LogCallback {
         // 5. Initialize Engine
         this.engine = new TaskEngine();
         this.worker = new TaskWorker(engine);
-    }
 
-    // This is the method triggered by the button
-    private void startScan() {
-        logArea.setText(""); // Clear old logs
-        startButton.setEnabled(false); // Prevent double-clicking
-        logArea.append("--- Starting Sentinel ---\n");
-        progressBar.setIndeterminate(true); // Show "loading" animation
+        // Setup button listener
+        startButton.addActionListener(e -> {
+            SwingWorker<String, String> swingWorker = new SwingWorker<String, String>() {
 
-        // RUN IN BACKGROUND THREAD
-        // (If we run this on the main thread, the UI will freeze!)
-        new Thread(() -> {
-            try {
-                // We need to modify TaskWorker to accept 'this' (the logger)
-                // For now, let's assume we fixed TaskWorker manually below
-                worker.registerData();
+                @Override
+                protected String doInBackground() throws Exception {
+                    logArea.setText(""); // Clear old logs
+                    startButton.setEnabled(false); // Prevent double-clicking
+                    logArea.append("--- Starting Sentinel ---\n");
+                    progressBar.setIndeterminate(true); // Show "loading" animation
+                    try {
+                        // We need to modify TaskWorker to accept 'this' (the logger)
+                        // For now, let's assume we fixed TaskWorker manually below
+                        worker.registerData();
 
-                // IMPORTANT: We need to update TaskWorker to pass 'this'
-                // to the new HttpCheckTask(..., this)
-                worker.generateTasksWithCallback(this);
+                        // IMPORTANT: We need to update TaskWorker to pass 'this'
+                        // to the new HttpCheckTask(..., this)
+                        worker.generateTasks();
 
-                worker.runTasks();
+                        worker.runTasks();
+                        engine.waitForCompletion(); // Wait for all tasks to finish
+                        
+                        publish(worker.getLogs().toArray(new String[0]));
+                        publish(worker.showReport());
 
-                // When done:
-                SwingUtilities.invokeLater(() -> {
-                    logArea.append("--- Scan Complete ---\n");
-                    worker.showReport(); // This prints to console, we might need to redirect it too
-                    startButton.setEnabled(true);
-                    progressBar.setIndeterminate(false);
-                });
+                        // When done:
+                        SwingUtilities.invokeLater(() -> {
+                            logArea.append("--- Scan Complete ---\n");
+                            startButton.setEnabled(true);
+                            progressBar.setIndeterminate(false);
+                        });
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }).start();
-    }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    // This return value gets sent to done()
+                    return "SUCCESS \n";
+                }
 
-    // The Callback Implementation
-    @Override
-    public void onLog(String message) {
-        // Swing is not thread-safe! We must update the UI on the Event Thread.
-        SwingUtilities.invokeLater(() -> {
-            logArea.append(message + "\n");
-            // Auto-scroll to bottom
-            logArea.setCaretPosition(logArea.getDocument().getLength());
+                // This replaces your onLog logic
+                // It runs on the UI thread AUTOMATICALLY
+                @Override
+                protected void process(java.util.List<String> chunks) {
+                    for (String message : chunks) {
+                        logArea.append(message + "\n");
+                    }
+                    // Auto-scroll
+                    logArea.setCaretPosition(logArea.getDocument().getLength());
+                }
+
+                // This runs on the UI thread when finished
+                @Override
+                protected void done() {
+                    try {
+                        String result = get(); // Get the return value from doInBackground
+                        logArea.append("\n----------------\n");
+                        logArea.append(result + "\n");
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            };
+
+            // 2. Run it
+            swingWorker.execute();
         });
-    }
-
-}
+    }}

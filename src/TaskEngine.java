@@ -13,10 +13,16 @@ public class TaskEngine {
     private final ExecutorService pool = Executors.newFixedThreadPool(10);
     private List<Future<Boolean>> futures = new ArrayList<>();
 
+    /** 
+     * @param task
+     */
     public void addTask (Task task){
         queue.add(task);
     }
 
+    /** 
+     * @param logBridge
+     */
     public void executeAll(Consumer<String> logBridge){
         Task currentTask;
         while ((currentTask = queue.poll()) != null) {
@@ -25,6 +31,9 @@ public class TaskEngine {
         }
     }
 
+    /** 
+     * @return String
+     */
     public String showReport() {
     int success = 0;
     int fail = 0;
@@ -69,6 +78,10 @@ public class TaskEngine {
         }
     }
 
+    /** 
+     * @return String
+     * @throws InterruptedException
+     */
     public String waitForCompletion() throws InterruptedException {
         try {
             for (Future<Boolean> future : futures) {

@@ -55,10 +55,16 @@ public class TaskWorker {
         this.workload.executeAll(logBuffer::add);
     }
  
+    /** 
+     * @return List<String>
+     */
     public List<String> getLogs() {
         return new ArrayList<>(logBuffer);
     }
  
+    /** 
+     * @return String
+     */
     public String showReport(){
         return this.workload.showReport();
     }

@@ -1,6 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-
 public class SentinelUI extends JFrame {
     private JTextArea logArea;
     private JButton startButton;
@@ -40,6 +39,7 @@ public class SentinelUI extends JFrame {
         this.worker = new TaskWorker(engine);
 
         // Setup button listener
+          
         startButton.addActionListener(e -> {
             SwingWorker<String, String> swingWorker = new SwingWorker<String, String>() {
 

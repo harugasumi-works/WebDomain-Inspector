@@ -15,10 +15,16 @@ public class HttpCheckTask implements Task{
             .build();
 
     
+    /** 
+     * @param logger
+     */
     public void setLogger(Consumer<String> logger) {
         this.logger = logger;
     }        
 
+    /** 
+     * @param message
+     */
     private void log(String message) {
     if (logger != null) {
         logger.accept(message);
@@ -30,6 +36,10 @@ public class HttpCheckTask implements Task{
         this.url = url;
     }
 
+    /** 
+     * @return Boolean
+     * @throws Exception
+     */
     @Override
     public Boolean call() throws Exception {
         try {
@@ -57,6 +67,9 @@ public class HttpCheckTask implements Task{
 
 
 
+    /** 
+     * @return int
+     */
     public int getPriority() {
         return level.getValue();
     }

@@ -36,9 +36,7 @@ public class HttpCheckTask implements Task{
      * @param message
      */
     private synchronized void log(String message) {
-    if (logger != null) {
         logger.accept(message);
-    }
 }
     /**
      * HttpCheckTaskのコンストラクタです。

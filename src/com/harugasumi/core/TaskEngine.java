@@ -1,3 +1,4 @@
+package com.harugasumi.core;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;

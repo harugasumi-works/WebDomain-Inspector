@@ -1,3 +1,4 @@
+package com.harugasumi.core;
 import javax.swing.*;
 import java.awt.*;
 public class SentinelUI extends JFrame {

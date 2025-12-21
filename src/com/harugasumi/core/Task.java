@@ -1,3 +1,4 @@
+package com.harugasumi.core;
 import java.util.concurrent.Callable;
 
 /**

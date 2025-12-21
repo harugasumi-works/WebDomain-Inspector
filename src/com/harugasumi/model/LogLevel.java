@@ -1,3 +1,4 @@
+package com.harugasumi.model;
 /**
  * この列挙形はURLの優先度を定めます。
  */

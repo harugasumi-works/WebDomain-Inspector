@@ -20,10 +20,10 @@ public class HttpCheckTask implements Task{
 
     
     /** 
-     * ロガーを設定します。
+     * <p>ロガーを設定します。
      * loggerがnullの場合、例外をスローします。
      * アプリがログ出力に依存しているため、ロガーは必須です。
-     * スレッドに安全にログを記録するために、nullチェックを行います。
+     * スレッドに安全にログを記録するために、nullチェックを行います。</p>
      * @param logger ログメッセージを受け取るためのコンシューマーを設定します。
      */
     @Override
@@ -76,7 +76,7 @@ public class HttpCheckTask implements Task{
                     .build();
 
             /**
-             * この行は、事前に設定された {code: HttpClient} を使用してネットワークリクエストを 同期的 に実行し、
+             * <p>この行は、事前に設定された {code: HttpClient} を使用してネットワークリクエストを 同期的 に実行し、
              * サーバーからの応答があるまでプログラムの実行を一時停止させます。
              * 先ほど作成した {code: request} オブジェクトを送信すると同時に、
              * {code: HttpResponse.BodyHandlers.discarding()} というボディハンドラを指定しています。
@@ -84,7 +84,7 @@ public class HttpCheckTask implements Task{
              * 即座に破棄（無視）するようクライアントに指示するものです。その結果、
              * 返される {code: HttpResponse<Void>} オブジェクト（変数 {code: response}）には、
              * ステータスコード（200や404など）のようなメタデータのみが含まれ、
-             * コンテンツデータは一切含まれないため、この確認処理においてメモリ効率が最大化されます。
+             * コンテンツデータは一切含まれないため、この確認処理においてメモリ効率が最大化されます。</p>
              */
             HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
             String msg = String.format("[%d] %s", response.statusCode(), url);

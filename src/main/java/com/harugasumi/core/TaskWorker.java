@@ -1,9 +1,7 @@
 package com.harugasumi.core;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 import com.harugasumi.model.LogLevel;
@@ -13,7 +11,6 @@ import java.util.List;
 public class TaskWorker {
  
     Map<LogLevel, ArrayList<String>> data;  
-    String sourcefile = "links.txt";
     private TaskEngine workload ;
     private final List<String> logBuffer = new ArrayList<>();
  
@@ -22,26 +19,29 @@ public class TaskWorker {
     }
  
     public void registerData() {
-        data = new HashMap<>(); 
-        try (BufferedReader br = new BufferedReader(new FileReader(sourcefile))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty() || line.startsWith("#")) continue;
-                int idx = line.indexOf('=');
-                if (idx < 0) continue;
-                String key = line.substring(0, idx).trim();
-                String val = line.substring(idx + 1).trim();
-                try {
-                    LogLevel lvl = LogLevel.valueOf(key.toUpperCase());
-                    data.computeIfAbsent(lvl, k -> new ArrayList<>()).add(val);
-                } catch (IllegalArgumentException ex) {
-                    System.err.println("Failed to parse level: '" + key + "'");
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        data = new EnumMap<>(LogLevel.class);
+    
+    // 2. Delegate file reading to the expert class
+    List<String> rawLines = new LinkLoader().loadLinks(); // Load from resources
+
+    // 3. Process the logic
+    for (String line : rawLines) {
+        // Logic is now clean and focused
+        if (line.startsWith("#")) continue;
+
+        int idx = line.indexOf('=');
+        if (idx < 0) continue;
+
+        String keyStr = line.substring(0, idx).trim();
+        String value  = line.substring(idx + 1).trim();
+
+        try {
+            LogLevel level = LogLevel.valueOf(keyStr.toUpperCase());
+            data.computeIfAbsent(level, k -> new ArrayList<>()).add(value);
+        } catch (IllegalArgumentException ex) {
+            System.err.println("Warning: Invalid config level " + keyStr);
         }
+    }
     }
  
     public void generateTasks() {

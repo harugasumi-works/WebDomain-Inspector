@@ -50,7 +50,9 @@ public class SentinelUI extends JFrame {
                     startButton.setEnabled(false); // Prevent double-clicking
                     logArea.append("--- Starting Sentinel ---\n");
                     progressBar.setIndeterminate(true); // Show "loading" animation
-                    try {
+                    new Thread(() -> {
+
+                        try{
                         // We need to modify TaskWorker to accept 'this' (the logger)
                         // For now, let's assume we fixed TaskWorker manually below
                         worker.registerData();
@@ -75,6 +77,7 @@ public class SentinelUI extends JFrame {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                } ).start();
                     // This return value gets sent to done()
                     return "SUCCESS \n";
                 }
@@ -106,4 +109,5 @@ public class SentinelUI extends JFrame {
             // 2. Run it
             swingWorker.execute();
         });
-    }}
+    }
+}

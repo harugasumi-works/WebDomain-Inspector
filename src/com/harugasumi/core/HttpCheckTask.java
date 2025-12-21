@@ -54,17 +54,17 @@ public class HttpCheckTask implements Task{
     /** 
      * このメソッドは、URLのHTTPヘッダーをチェックし、ステータスコードをログに記録します。
      * Exceptionが発生した場合はエラーメッセージをログに記録します。
-     * @return Boolean
-     * @throws Exception
+     * @return Boolean　タスクの実行結果（成功または失敗）
+     * @throws Exception　例外が発生した場合
      */
     @Override
     public Boolean call() throws Exception {
         try {
             /**
-             * <p> このコードはJavaの{code: Builder}パターンを利用して、{code: this.url}に向けた
+             * <p> このコードはJavaの{＠code: Builder}パターンを利用して、{@code: this.url}に向けた
              * 不変（Immutable）なHttpRequestオブジェクトを構築しています。
              * サーバーの応答が遅い場合にアプリがフリーズしないよう
-             * 3秒のタイムアウトを設定し、サーバーからのアクセス拒否を回避するために「{code: User-Agent}」ヘッダーで
+             * 3秒のタイムアウトを設定し、サーバーからのアクセス拒否を回避するために「{@code: User-Agent}」ヘッダーで
              * 自身を「Sentinel/1.0」（ブラウザを模倣）として識別させています。最も重要な点は、通常の「GET」
              * ではなく<b>「HEAD」</b>メソッドを指定していることです。これにより、サーバーはコンテンツの中身
              * （ボディ）を送らずにヘッダー情報のみを返すよう指示されるため、
@@ -79,13 +79,13 @@ public class HttpCheckTask implements Task{
                     .build();
 
             /**
-             * <p>この行は、事前に設定された {code: HttpClient} を使用してネットワークリクエストを 同期的 に実行し、
+             * <p>この行は、事前に設定された {@code: HttpClient} を使用してネットワークリクエストを 同期的 に実行し、
              * サーバーからの応答があるまでプログラムの実行を一時停止させます。
-             * 先ほど作成した {code: request} オブジェクトを送信すると同時に、
-             * {code: HttpResponse.BodyHandlers.discarding()} というボディハンドラを指定しています。
+             * 先ほど作成した {@code: request} オブジェクトを送信すると同時に、
+             * {@code: HttpResponse.BodyHandlers.discarding()} というボディハンドラを指定しています。
              * これは、サーバーから送られてくるボディデータ（コンテンツ）をメモリに保存せず、
              * 即座に破棄（無視）するようクライアントに指示するものです。その結果、
-             * 返される {code: HttpResponse<Void>} オブジェクト（変数 {code: response}）には、
+             * 返される {@code: HttpResponse<Void>} オブジェクト（変数 {@code: response}）には、
              * ステータスコード（200や404など）のようなメタデータのみが含まれ、
              * コンテンツデータは一切含まれないため、この確認処理においてメモリ効率が最大化されます。</p>
              */
@@ -111,7 +111,7 @@ public class HttpCheckTask implements Task{
 
     /** 
      * タスクの優先度を整数で返します。
-     * @return int
+     * @return int タスクの優先度を表す整数値
      */
     public int getPriority() {
         return level.getValue();

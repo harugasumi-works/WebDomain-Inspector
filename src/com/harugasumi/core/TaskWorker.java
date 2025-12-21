@@ -59,7 +59,7 @@ public class TaskWorker {
     }
  
     /** 
-     * @return List<String>
+     * @return {@code List<String>}
      */
     public List<String> getLogs() {
         return new ArrayList<>(logBuffer);

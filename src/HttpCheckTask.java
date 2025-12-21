@@ -3,6 +3,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 
@@ -20,18 +21,21 @@ public class HttpCheckTask implements Task{
     
     /** 
      * ロガーを設定します。
+     * loggerがnullの場合、例外をスローします。
+     * アプリがログ出力に依存しているため、ロガーは必須です。
+     * スレッドに安全にログを記録するために、nullチェックを行います。
      * @param logger ログメッセージを受け取るためのコンシューマーを設定します。
      */
     @Override
     public void setLogger(Consumer<String> logger) {
-        this.logger = logger;
+        this.logger = Objects.requireNonNull(logger, "Logger is required for HttpCheckTask");
     }        
 
     /** 
-     * ログメッセージを出力します。
+     * ログメッセージを記録します。
      * @param message
      */
-    private void log(String message) {
+    private synchronized void log(String message) {
     if (logger != null) {
         logger.accept(message);
     }
@@ -47,7 +51,8 @@ public class HttpCheckTask implements Task{
     }
 
     /** 
-     * 
+     * このメソッドは、URLのHTTPヘッダーをチェックし、ステータスコードをログに記録します。
+     * Exceptionが発生した場合はエラーメッセージをログに記録します。
      * @return Boolean
      * @throws Exception
      */
@@ -85,18 +90,18 @@ public class HttpCheckTask implements Task{
              */
             HttpResponse<Void> response = client.send(request, HttpResponse.BodyHandlers.discarding());
             String msg = String.format("[%d] %s", response.statusCode(), url);
-           
-            if (logger != null) {
              /**
              * @see private void log(String message)
              */
-            log(msg);
-            }
+             log(msg);
             return true;
            
 
         } catch (Exception e) {
-           System.out.printf("[ERROR] %s - %s%n", url, e.getMessage());
+           String errmsg = String.format("[ERROR] %s - %s%n", url, e.getMessage());
+           if (logger != null) {
+            log(errmsg);
+           }
            return false;
         }
     }
@@ -104,6 +109,7 @@ public class HttpCheckTask implements Task{
 
 
     /** 
+     * タスクの優先度を整数で返します。
      * @return int
      */
     public int getPriority() {

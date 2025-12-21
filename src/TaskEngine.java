@@ -38,7 +38,6 @@ public class TaskEngine {
     int success = 0;
     int fail = 0;
     List<String> report = new ArrayList<>();
-    // We wait for all tasks to finish here
     for (Future<Boolean> result : futures) {
         try {
             if (result.get()) {
@@ -47,7 +46,7 @@ public class TaskEngine {
                 fail++;
             }
         } catch (Exception e) {
-            fail++; // Count crashed tasks as failures
+            fail++;
         }
     }
     
@@ -66,11 +65,10 @@ public class TaskEngine {
     }
 
     public void stop() {
-    pool.shutdown(); // Stop accepting new tasks
+    pool.shutdown(); 
     try {
-        // Wait up to 60 seconds for existing tasks to finish
         if (!pool.awaitTermination(60, java.util.concurrent.TimeUnit.SECONDS)) {
-            pool.shutdownNow(); // Force kill if they take too long
+            pool.shutdownNow(); 
         }
     } catch (InterruptedException e) {
         pool.shutdownNow();
@@ -86,9 +84,8 @@ public class TaskEngine {
         try {
             for (Future<Boolean> future : futures) {
                 try {
-                    future.get(); // blocks until this task completes
+                    future.get(); 
                 } catch (java.util.concurrent.ExecutionException e) {
-                    // task threw; treat as completed and continue
                 }
             }
             return "All tasks done";

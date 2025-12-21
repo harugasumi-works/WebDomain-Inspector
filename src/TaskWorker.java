@@ -18,7 +18,7 @@ public class TaskWorker {
     }
  
     public void registerData() {
-        data = new HashMap<>(); // Map<LogLevel, List<String>>
+        data = new HashMap<>(); 
         try (BufferedReader br = new BufferedReader(new FileReader(sourcefile))) {
             String line;
             while ((line = br.readLine()) != null) {
@@ -51,7 +51,6 @@ public class TaskWorker {
  
     public void runTasks() {
         logBuffer.clear();
-        // pass a Consumer that stores each log message into logBuffer
         this.workload.executeAll(logBuffer::add);
     }
  

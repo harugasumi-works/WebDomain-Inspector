@@ -3,6 +3,8 @@ package com.harugasumi.core;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.harugasumi.model.LogLevel;
 
@@ -12,7 +14,7 @@ public class TaskWorker {
  
     Map<LogLevel, ArrayList<String>> data;  
     private TaskEngine workload ;
-    private final List<String> logBuffer = new ArrayList<>();
+    private final Queue<String> logBuffer = new ConcurrentLinkedQueue<>();
  
     public TaskWorker (TaskEngine engine) {
         this.workload = engine;
@@ -75,4 +77,5 @@ public class TaskWorker {
     public void stop() {
         this.workload.stop();
     }
+
 }

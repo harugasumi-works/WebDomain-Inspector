@@ -62,9 +62,10 @@ public class SentinelUI extends JFrame {
                         worker.generateTasks();
 
                         worker.runTasks();
-                        engine.waitForCompletion(); // Wait for all tasks to finish
+
                         
                         publish(worker.getLogs().toArray(new String[0]));
+                        publish(engine.waitForCompletion(5, java.util.concurrent.TimeUnit.SECONDS));
                         publish(worker.showReport());
 
                         // When done:

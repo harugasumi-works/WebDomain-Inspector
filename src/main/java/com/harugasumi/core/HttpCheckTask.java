@@ -5,7 +5,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.Objects;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
+
 
 import com.harugasumi.model.LogLevel;
 
@@ -13,7 +16,8 @@ import com.harugasumi.model.LogLevel;
 public class HttpCheckTask implements Task{
     private final LogLevel level;
     private final String url;
-    private Consumer<String> logger;
+    private final Queue<String> logStorage = new ConcurrentLinkedQueue<>();
+    private Consumer<String> logger = (msg) -> logStorage.add(msg);
     /**
      * HttpClient　インスタンス
      */
@@ -30,7 +34,7 @@ public class HttpCheckTask implements Task{
      * @param logger ログメッセージを受け取るためのコンシューマーを設定します。
      */
     @Override
-    public void setLogger(Consumer<String> logger) {
+    public synchronized void setLogger(Consumer<String> logger) {
         this.logger = Objects.requireNonNull(logger, "Logger is required for HttpCheckTask");
     }        
 

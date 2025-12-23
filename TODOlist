@@ -7,3 +7,5 @@
 - [ ] turn into an .exe
 - [ ] add a wizard
 - [ ] wrap everything in an .msi file
+- [ ] integrate everything into Maven
+- [ ] add download validation

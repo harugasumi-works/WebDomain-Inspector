@@ -2,7 +2,9 @@ package com.harugasumi.core;
 import javax.swing.*;
 import java.awt.*;
 public class SentinelUI extends JFrame {
-    private JTextArea logArea;
+  
+	private static final long serialVersionUID = 1L;
+	private JTextArea logArea;
     private JButton startButton;
     private JProgressBar progressBar;
     private TaskEngine engine;
@@ -42,72 +44,63 @@ public class SentinelUI extends JFrame {
         // Setup button listener
           
         startButton.addActionListener(e -> {
+        	startButton.setEnabled(false);
+            
             SwingWorker<String, String> swingWorker = new SwingWorker<String, String>() {
 
                 @Override
                 protected String doInBackground() throws Exception {
-                    logArea.setText(""); // Clear old logs
-                    startButton.setEnabled(false); // Prevent double-clicking
-                    logArea.append("--- Starting Sentinel ---\n");
-                    progressBar.setIndeterminate(true); // Show "loading" animation
-                    new Thread(() -> {
+                    // 1. Setup UI (Safe to do here because SwingWorker handles it)
+                    publish("--- Starting Sentinel ---\n");
+                    
+                    // 2. Prepare Data
+                    worker.registerData();
+                    worker.generateTasks();
 
-                        try{
-                        // We need to modify TaskWorker to accept 'this' (the logger)
-                        // For now, let's assume we fixed TaskWorker manually below
-                        worker.registerData();
+                    // 3. RUN THE TASKS (The Critical Change)
+                    // We pass a lambda "msg -> publish(msg)" which sends logs to the UI live!
+                    worker.runTasks(msg -> publish(msg));
 
-                        // IMPORTANT: We need to update TaskWorker to pass 'this'
-                        // to the new HttpCheckTask(..., this)
-                        worker.generateTasks();
-
-                        worker.runTasks();
-
-                        
-                        publish(worker.getLogs().toArray(new String[0]));
-                        publish(engine.waitForCompletion(5, java.util.concurrent.TimeUnit.SECONDS));
-                        publish(worker.showReport());
-
-                        // When done:
-                        SwingUtilities.invokeLater(() -> {
-                            logArea.append("--- Scan Complete ---\n");
-                            startButton.setEnabled(true);
-                            progressBar.setIndeterminate(false);
-                        });
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                } ).start();
-                    // This return value gets sent to done()
-                    return "SUCCESS \n";
+                    // 4. Wait for them to finish (Blocking the worker, NOT the UI)
+                    String waitResult = engine.waitForCompletion(5, java.util.concurrent.TimeUnit.SECONDS);
+                    
+                    // 5. Show Final Stats
+                    publish(worker.showReport());
+                    
+                    return waitResult;
                 }
 
-                // This replaces your onLog logic
-                // It runs on the UI thread AUTOMATICALLY
+                // This receives the "publish(msg)" data on the UI Thread
                 @Override
                 protected void process(java.util.List<String> chunks) {
                     for (String message : chunks) {
                         logArea.append(message + "\n");
                     }
-                    // Auto-scroll
+                    // Auto-scroll to bottom
                     logArea.setCaretPosition(logArea.getDocument().getLength());
                 }
 
-                // This runs on the UI thread when finished
+                // Runs when everything is 100% done
                 @Override
                 protected void done() {
                     try {
-                        String result = get(); // Get the return value from doInBackground
-                        logArea.append("\n----------------\n");
+                        // Get the result from doInBackground
+                        String result = get(); 
+                        logArea.append("\n=== SCAN FINISHED ===\n");
                         logArea.append(result + "\n");
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        logArea.append("Error: " + ex.getMessage());
+                    } finally {
+                        // Re-enable the button
+                        startButton.setEnabled(true);
+                        progressBar.setIndeterminate(false);
                     }
                 }
             };
 
-            // 2. Run it
+            // Start the loading animation
+            progressBar.setIndeterminate(true);
+            // Fire the worker
             swingWorker.execute();
         });
     }

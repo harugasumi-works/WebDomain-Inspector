@@ -55,9 +55,14 @@ public class TaskWorker {
     }
  
  
-    public void runTasks() {
+    public void runTasks(java.util.function.Consumer<String> uiCallback) {
         logBuffer.clear();
-        this.workload.executeAll(logBuffer::add);
+        this.workload.executeAll(msg -> {
+            this.logBuffer.add(msg);         // Save to memory
+            if (uiCallback != null) {
+                uiCallback.accept(msg);      // Send to UI
+            }
+        });
     }
  
     /** 

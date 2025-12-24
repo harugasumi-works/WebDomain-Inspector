@@ -17,7 +17,7 @@ public class HttpCheckTask implements Task{
     private final LogLevel level;
     private final String url;
     private final Queue<String> logStorage = new ConcurrentLinkedQueue<>();
-    private Consumer<String> logger = (msg) -> logStorage.add(msg);
+    private Consumer<String> logger = (msg) -> this.logStorage.add(msg);
     /**
      * HttpClient　インスタンス
      */

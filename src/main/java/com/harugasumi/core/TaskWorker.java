@@ -2,13 +2,12 @@ package com.harugasumi.core;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.harugasumi.model.LogLevel;
-
-import java.util.List;
  
 public class TaskWorker {
  
@@ -39,7 +38,7 @@ public class TaskWorker {
 
         try {
             LogLevel level = LogLevel.valueOf(keyStr.toUpperCase());
-            data.computeIfAbsent(level, k -> new ArrayList<>()).add(value);
+            data.computeIfAbsent(level, _ -> new ArrayList<>()).add(value);
         } catch (IllegalArgumentException ex) {
             System.err.println("Warning: Invalid config level " + keyStr);
         }

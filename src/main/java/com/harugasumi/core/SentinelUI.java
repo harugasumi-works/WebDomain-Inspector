@@ -1,6 +1,15 @@
 package com.harugasumi.core;
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.SwingWorker;
 public class SentinelUI extends JFrame {
   
 	private static final long serialVersionUID = 1L;
@@ -43,7 +52,7 @@ public class SentinelUI extends JFrame {
 
         // Setup button listener
           
-        startButton.addActionListener(e -> {
+        startButton.addActionListener(_ -> {
         	startButton.setEnabled(false);
             
             SwingWorker<String, String> swingWorker = new SwingWorker<String, String>() {

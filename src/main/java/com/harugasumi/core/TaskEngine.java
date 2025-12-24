@@ -132,7 +132,7 @@ public synchronized void executeAll(Consumer<String> logBridge) {
         }
 
         if (snap.isEmpty()) {
-            return "No tasks to wait for.";
+            return "No tasks to wait for."; //$NON-NLS-1$
         }
 
         // 2. The Blocking Wait

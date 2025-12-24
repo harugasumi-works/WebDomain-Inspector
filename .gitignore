@@ -2,10 +2,15 @@
 /bin/
 /out/
 /target/
-*.class
+/build/
 *.jar
 *.war
-
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+*.class
 # --- IDE Settings (Eclipse/IntelliJ/VS Code) ---
 .settings/
 .classpath
@@ -14,6 +19,9 @@
 .idea/
 *.iml
 
+# Virtual Machine Crash Logs
+hs_err_pid*
+
 # --- Documentation ---
 # Only ignore this if it is auto-generated
 /doc/
@@ -21,3 +29,12 @@
 # --- OS Junk ---
 .DS_Store
 Thumbs.db
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/

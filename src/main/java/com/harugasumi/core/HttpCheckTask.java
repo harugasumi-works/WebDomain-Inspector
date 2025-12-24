@@ -97,6 +97,8 @@ public class HttpCheckTask implements Task{
             String msg = String.format("[%d] %s", response.statusCode(), url);
              /**
              * @see private void log(String message)
+             * somethingsomething
+             *              
              */
              log(msg);
             return true;

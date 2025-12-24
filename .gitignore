@@ -1,3 +1,23 @@
-/bin1/
+# --- Build Artifacts (Compiled Code) ---
 /bin/
+/out/
 /target/
+*.class
+*.jar
+*.war
+
+# --- IDE Settings (Eclipse/IntelliJ/VS Code) ---
+.settings/
+.classpath
+.project
+.vscode/
+.idea/
+*.iml
+
+# --- Documentation ---
+# Only ignore this if it is auto-generated
+/doc/
+
+# --- OS Junk ---
+.DS_Store
+Thumbs.db

@@ -1,6 +1,0 @@
-CRITICAL=https://www.google.com
-CRITICAL=https://www.github.com
-WARNING=https://www.stackoverflow.com
-WARNING=https://www.wikipedia.org
-INFO=https://www.example.com
-INFO=https://this-site-does-not-exist-12345.com

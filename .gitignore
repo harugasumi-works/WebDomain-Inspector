@@ -38,3 +38,9 @@ Thumbs.db
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
+
+# Maven - Ignore the shade plugin artifact
+dependency-reduced-pom.xml
+
+# Runtime - Ignore local session data
+session.json
